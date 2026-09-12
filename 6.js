@@ -260,7 +260,7 @@ async function main() {
                 break;
             }
 
-            if (mirages < 1200) {
+            if (mirages < 2500) {
                 console.log('Замало міражів, процес призупинено');
                 break;
             }
