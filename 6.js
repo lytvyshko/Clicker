@@ -251,6 +251,9 @@ async function main() {
             await waitUntilResumed();
             backgroundLeftClick(targetWindow, 1762, 543);
             success = 0;
+            await pauseAwareSleep(2000);
+            backgroundLeftClick(targetWindow, 1717, 700);
+            isNeboActive = false;
 
             if (ready === total) {
                 console.log("Успіх, всі шмотки заточені!");
