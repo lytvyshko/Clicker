@@ -108,7 +108,7 @@ async function main() {
         backgroundKey(targetWindow, VK_BACK);
         await sleep(50);
 
-        for (const digit of "21399000") {
+        for (const digit of "2990000") {
             backgroundKey(targetWindow, 0x30 + Number(digit));
             await sleep(50);
         }
