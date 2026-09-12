@@ -3,16 +3,16 @@ import readline from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
 
 const minIntervalMs = 3600;
-const maxIntervalMs = 4100;
-const meanIntervalMs = (minIntervalMs + maxIntervalMs) / 2; // 4050
-const stdDevMs = (maxIntervalMs - minIntervalMs) / 6; // ~150
+const maxIntervalMs = 4200;
+const meanIntervalMs = (minIntervalMs + maxIntervalMs) / 2;
+const stdDevMs = (maxIntervalMs - minIntervalMs) / 6;
 
 // --- Fatigue-модель: параметри "ігрової сесії" ---
 const sessionMinMs = 15 * 60 * 1000;   // мінімальна тривалість сесії: 15 хв
-const sessionMaxMs = 40 * 60 * 1000;   // максимальна тривалість сесії: 40 хв
-const breakMinMs = 60 * 1000;          // мінімальна перерва: 1 хв
-const breakMaxMs = 8 * 60 * 1000;      // максимальна перерва: 8 хв
-const fatigueMaxSlowdown = 0.25;       // під кінець сесії інтервали зростають до +25%
+const sessionMaxMs = 45 * 60 * 1000;   // максимальна тривалість сесії: 45 хв
+const breakMinMs = 5 * 60 * 1000;          // мінімальна перерва: 5 хв
+const breakMaxMs = 12 * 60 * 1000;      // максимальна перерва: 12 хв
+const fatigueMaxSlowdown = 0.13;       // під кінець сесії інтервали зростають до +13%
 const clickJitterPx = 5;               // максимальне відхилення кліку від базової точки, px
 
 const WM_LBUTTONDOWN = 0x0201;
