@@ -196,6 +196,8 @@ function formatDuration(ms) {
 
 async function main() {
     const terminal = readline.createInterface({ input, output });
+    let isNeboActive = false;
+    const neboCoords = {x: 1638, y: 301};
 
     await terminal.question(
         "Наведіть курсор на потрібне місце в грі й натисніть Enter..."
@@ -235,8 +237,20 @@ async function main() {
 
     console.log(`\n▶ Нова сесія: ~${formatDuration(sessionDuration)}`);
 
-    while (success <= 3) {
+    while (success <= 4) {
+        if (isNeboActive) {
+            backgroundLeftClick(targetWindow, 1717, 700);
+            isNeboActive = false;
+            await pauseAwareSleep(2000);
+        }
+
         if (success === 3) {
+            backgroundRightClick(targetWindow, neboCoords.x, neboCoords.y);
+            isNeboActive = true;
+            await pauseAwareSleep(2000);
+        }
+
+        if (success === 4) {
             ready++;
             await waitUntilResumed();
             backgroundLeftClick(targetWindow, 1762, 543);
@@ -247,7 +261,7 @@ async function main() {
                 break;
             }
 
-            if (mirages < 250) {
+            if (mirages < 1000) {
                 console.log('Замало міражів, процес призупинено');
                 break;
             }
@@ -288,6 +302,10 @@ async function main() {
 
         console.log(`інтервал ${interval}мс`);
         await pauseAwareSleep(interval);
+
+        if (isNeboActive) {
+            await pauseAwareSleep(300);
+        }
 
         const colorFound = await hasTargetColor(colorRegion);
         if (colorFound) {
