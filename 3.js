@@ -3,10 +3,18 @@ import { Region, screen } from "@nut-tree-fork/nut-js";
 import readline from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
 
-const total = 10;
+const total = Number(process.argv[2]);
 let ready = 0;
-let mirages = 11706;
+let mirages = Number(process.argv[3]);
 let success = 0;
+
+if (!Number.isInteger(total) || total <= 0) {
+    throw new Error("Потрібно передати додатне ціле значення total.");
+}
+
+if (!Number.isInteger(mirages) || mirages < 0) {
+    throw new Error("Потрібно передати невід'ємне ціле значення mirages.");
+}
 
 const minIntervalMs = 2100;
 const maxIntervalMs = 2400;
@@ -138,7 +146,6 @@ function makeMouseLParam(x, y) {
 }
 
 function backgroundLeftClick(windowHandle, x, y) {
-    console.log(`Клік у ${x}, ${y} `);
     const lParam = makeMouseLParam(x, y);
     PostMessageW(windowHandle, WM_LBUTTONDOWN, MK_LBUTTON, lParam);
     PostMessageW(windowHandle, WM_LBUTTONUP, 0, lParam);
@@ -209,12 +216,6 @@ async function main() {
         terminal.close();
         throw new Error("Не вдалося визначити вікно під курсором.");
     }
-
-    // const clientPoint = { x: screenPoint.x, y: screenPoint.y };
-    // if (!ScreenToClient(targetWindow, clientPoint)) {
-    //     terminal.close();
-    //     throw new Error("Не вдалося перетворити координати у координати вікна.");
-    // }
 
     backgroundRightClick(targetWindow, screenPoint.x, screenPoint.y);
     await sleep(1000);
