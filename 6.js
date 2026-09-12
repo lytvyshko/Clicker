@@ -233,8 +233,8 @@ async function main() {
 
     console.log(`\n▶ Нова сесія: ~${formatDuration(sessionDuration)}`);
 
-    while (success <= 4) {
-        if (isNeboActive) {
+    while (success <= 6) {
+        if (success === 0 && isNeboActive) {
             backgroundLeftClick(targetWindow, 1717, 700);
             isNeboActive = false;
             await pauseAwareSleep(2000);
@@ -246,7 +246,7 @@ async function main() {
             await pauseAwareSleep(2000);
         }
 
-        if (success === 4) {
+        if (success === 6) {
             ready++;
             await waitUntilResumed();
             backgroundLeftClick(targetWindow, 1762, 543);
@@ -257,7 +257,7 @@ async function main() {
                 break;
             }
 
-            if (mirages < 1000) {
+            if (mirages < 1200) {
                 console.log('Замало міражів, процес призупинено');
                 break;
             }
