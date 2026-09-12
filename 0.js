@@ -3,6 +3,11 @@ import readline from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
 
 const total = 20;
+const price = process.argv[2];
+
+if (!price || !/^\d+$/.test(price)) {
+    throw new Error("Потрібно передати ціну як число.");
+}
 
 const WM_LBUTTONDOWN = 0x0201;
 const WM_LBUTTONUP = 0x0202;
@@ -54,16 +59,13 @@ function backgroundKey(windowHandle, virtualKey) {
     PostMessageW(windowHandle, WM_KEYUP, virtualKey, 0xC0000001);
 }
 
-async function main() {
-    const terminal = readline.createInterface({ input, output });
-
+async function bindToWindow(terminal) {
     await terminal.question(
         "Наведіть курсор на потрібне вікно й натисніть Enter..."
     );
 
     const screenPoint = { x: 0, y: 0 };
     if (!GetCursorPos(screenPoint)) {
-        terminal.close();
         throw new Error("Не вдалося визначити позицію курсора.");
     }
 
@@ -72,11 +74,14 @@ async function main() {
         ? GetAncestor(windowUnderCursor, GA_ROOT)
         : null;
 
-    terminal.close();
-
     if (!targetWindow) {
         throw new Error("Не вдалося визначити вікно під курсором.");
     }
+
+    return targetWindow;
+}
+
+async function runOnce(targetWindow) {
 
     let x = 24;
     let y = 67;
@@ -108,13 +113,13 @@ async function main() {
         backgroundKey(targetWindow, VK_BACK);
         await sleep(50);
 
-        for (const digit of "2990000") {
+        for (const digit of price) {
             backgroundKey(targetWindow, 0x30 + Number(digit));
             await sleep(50);
         }
 
         await sleep(50);
-        backgroundLeftClick(targetWindow, 899, 826);
+        backgroundLeftClick(targetWindow, 929, 838);
         ready += 1;
 
         if (ready % 8 === 0) {
@@ -123,6 +128,22 @@ async function main() {
         } else {
             x += 33;
         }
+    }
+}
+
+async function main() {
+    const terminal = readline.createInterface({ input, output });
+
+    try {
+        while (true) {
+            const targetWindow = await bindToWindow(terminal);
+            await runOnce(targetWindow);
+
+            console.log(`\nГотово. Ціна ${price} залишилась тією самою.`);
+            console.log("Для нового запуску наведіть курсор на потрібне вікно й натисніть Enter.");
+        }
+    } finally {
+        terminal.close();
     }
 }
 
