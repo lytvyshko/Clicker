@@ -285,7 +285,7 @@ async function main() {
         const interval = randomInterval();
         await pauseAwareSleep(interval);
 
-        if (isNeboActive) {
+        if (isNeboOrPodzemActive) {
             await pauseAwareSleep(300);
         }
 

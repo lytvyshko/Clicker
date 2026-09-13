@@ -27,10 +27,50 @@ const ScreenToClient = user32.func("__stdcall", "ScreenToClient", "bool", [
     koffi.inout(koffi.pointer(POINT)),
 ]);
 const PostMessageW = user32.func("__stdcall", "PostMessageW", "bool", [HWND, "uint", "uintptr", "intptr"]);
+const GetAsyncKeyState = user32.func("__stdcall", "GetAsyncKeyState", "int16", ["int"]);
 
 const GA_ROOT = 2;
+const VK_F8 = 0x77;
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+let paused = false;
+
+function startPauseHotkey() {
+    let wasPressed = false;
+
+    return setInterval(() => {
+        const isPressed = (GetAsyncKeyState(VK_F8) & 0x8000) !== 0;
+
+        if (isPressed && !wasPressed) {
+            paused = !paused;
+            console.log(paused ? "Paused" : "Resumed");
+        }
+
+        wasPressed = isPressed;
+    }, 50);
+}
+
+async function pauseAwareSleep(durationMs) {
+    let remainingMs = durationMs;
+
+    while (remainingMs > 0) {
+        if (paused) {
+            await sleep(100);
+            continue;
+        }
+
+        const startedAt = Date.now();
+        await sleep(Math.min(100, remainingMs));
+        remainingMs -= Date.now() - startedAt;
+    }
+}
+
+async function waitUntilResumed() {
+    while (paused) {
+        await sleep(100);
+    }
+}
 
 function gaussianRandom(mean, stdDev) {
     let u1 = Math.random();
@@ -108,10 +148,15 @@ async function main() {
     terminal.close();
 
     console.log(`Фонові кліки у координатах вікна: (${clientPoint.x}, ${clientPoint.y})`);
+    console.log("F8 — pause/resume, Ctrl+C — stop");
+
+    startPauseHotkey();
 
     let totalClicks = 0;
 
     while (true) {
+        await waitUntilResumed();
+
         const jitteredX = jitterCoordinate(clientPoint.x, clickJitterPx);
         const jitteredY = jitterCoordinate(clientPoint.y, clickJitterPx);
         backgroundClick(targetWindow, jitteredX, jitteredY);
@@ -119,7 +164,7 @@ async function main() {
 
         const interval = randomInterval();
         console.log(`клік #${totalClicks}, інтервал ${interval}мс`);
-        await sleep(interval);
+        await pauseAwareSleep(interval);
     }
 }
 
