@@ -293,7 +293,12 @@ async function main() {
         if (colorFound) {
             success++
         } else {
-            success = 0
+            if (success === 6) {
+                success = 5;
+                isFailAfter6 = true;
+            } else {
+                success = 0
+            }
         }
     }
 
