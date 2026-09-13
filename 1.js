@@ -2,18 +2,12 @@ import koffi from "koffi";
 import readline from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
 
-const minIntervalMs = 3600;
-const maxIntervalMs = 4200;
+const minIntervalMs = 3700;
+const maxIntervalMs = 4100;
 const meanIntervalMs = (minIntervalMs + maxIntervalMs) / 2;
 const stdDevMs = (maxIntervalMs - minIntervalMs) / 6;
 
-// --- Fatigue-модель: параметри "ігрової сесії" ---
-const sessionMinMs = 15 * 60 * 1000;   // мінімальна тривалість сесії: 15 хв
-const sessionMaxMs = 45 * 60 * 1000;   // максимальна тривалість сесії: 45 хв
-const breakMinMs = 5 * 60 * 1000;          // мінімальна перерва: 5 хв
-const breakMaxMs = 12 * 60 * 1000;      // максимальна перерва: 12 хв
-const fatigueMaxSlowdown = 0.13;       // під кінець сесії інтервали зростають до +13%
-const clickJitterPx = 5;               // максимальне відхилення кліку від базової точки, px
+const clickJitterPx = 5;// максимальне відхилення кліку від базової точки, px
 
 const WM_LBUTTONDOWN = 0x0201;
 const WM_LBUTTONUP = 0x0202;
@@ -47,31 +41,12 @@ function gaussianRandom(mean, stdDev) {
     return mean + z0 * stdDev;
 }
 
-function randomBetween(min, max) {
-    return Math.random() * (max - min) + min;
-}
-
-/**
- * Інтервал між кліками з урахуванням "втоми" — наскільки далеко ми
- * зайшли у поточну сесію (0 = щойно почали, 1 = кінець сесії).
- * Ближче до кінця сесії людина клікає трохи повільніше й нерівномірніше.
- */
-function randomInterval(fatigueRatio = 0) {
-    // втома трохи зсуває середнє і збільшує розкид
-    const fatigueFactor = 1 + fatigueMaxSlowdown * fatigueRatio;
-    const adjustedMean = meanIntervalMs * fatigueFactor;
-    const adjustedStdDev = stdDevMs * (1 + 0.5 * fatigueRatio);
-
-    let interval = gaussianRandom(adjustedMean, adjustedStdDev);
+function randomInterval() {
+    let interval = gaussianRandom(meanIntervalMs, stdDevMs);
 
     // зрідка (~3%) імітуємо "відволікання" — довша пауза
     if (Math.random() < 0.03) {
-        interval += Math.random() * 8000 + 4000; // +4-12 секунд
-    }
-
-    // зрідка (~2%) невелике прискорення, але без виходу за межі кулдауну
-    if (Math.random() < 0.02) {
-        interval *= 0.85;
+        interval += Math.random() * 1000 + 3000; // +3-4 секунд
     }
 
     return Math.max(minIntervalMs, Math.floor(interval));
@@ -99,13 +74,6 @@ function backgroundClick(windowHandle, x, y) {
     const lParam = makeMouseLParam(x, y);
     PostMessageW(windowHandle, WM_LBUTTONDOWN, MK_LBUTTON, lParam);
     PostMessageW(windowHandle, WM_LBUTTONUP, 0, lParam);
-}
-
-function formatDuration(ms) {
-    const totalSeconds = Math.round(ms / 1000);
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${minutes} хв ${seconds} сек`;
 }
 
 async function main() {
@@ -144,31 +112,14 @@ async function main() {
     let totalClicks = 0;
 
     while (true) {
-        // --- нова "ігрова сесія" ---
-        const sessionDuration = randomBetween(sessionMinMs, sessionMaxMs);
-        const sessionStart = Date.now();
-        const sessionEnd = sessionStart + sessionDuration;
+        const jitteredX = jitterCoordinate(clientPoint.x, clickJitterPx);
+        const jitteredY = jitterCoordinate(clientPoint.y, clickJitterPx);
+        backgroundClick(targetWindow, jitteredX, jitteredY);
+        totalClicks += 1;
 
-        console.log(`\n▶ Нова сесія: ~${formatDuration(sessionDuration)}`);
-
-        while (Date.now() < sessionEnd) {
-            const jitteredX = jitterCoordinate(clientPoint.x, clickJitterPx);
-            const jitteredY = jitterCoordinate(clientPoint.y, clickJitterPx);
-            backgroundClick(targetWindow, jitteredX, jitteredY);
-            totalClicks += 1;
-
-            // наскільки глибоко ми в сесії (0..1), впливає на "втому"
-            const fatigueRatio = Math.min(1, (Date.now() - sessionStart) / sessionDuration);
-            const interval = randomInterval(fatigueRatio);
-
-            console.log(`клік #${totalClicks}, інтервал ${interval}мс, втома ${(fatigueRatio * 100).toFixed(0)}%`);
-            await sleep(interval);
-        }
-
-        // --- перерва на "перепочити" ---
-        const breakDuration = randomBetween(breakMinMs, breakMaxMs);
-        console.log(`⏸ Перерва: ~${formatDuration(breakDuration)}`);
-        await sleep(breakDuration);
+        const interval = randomInterval();
+        console.log(`клік #${totalClicks}, інтервал ${interval}мс`);
+        await sleep(interval);
     }
 }
 
