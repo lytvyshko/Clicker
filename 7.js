@@ -98,10 +98,6 @@ function gaussianRandom(mean, stdDev) {
     return mean + z0 * stdDev;
 }
 
-function randomBetween(min, max) {
-    return Math.random() * (max - min) + min;
-}
-
 /**
  * Інтервал між кліками з урахуванням "втоми" — наскільки далеко ми
  * зайшли у поточну сесію (0 = щойно почали, 1 = кінець сесії).

@@ -17,7 +17,7 @@ if (!Number.isInteger(mirages) || mirages < 0) {
 }
 
 const minIntervalMs = 2100;
-const maxIntervalMs = 2400;
+const maxIntervalMs = 2350;
 const meanIntervalMs = (minIntervalMs + maxIntervalMs) / 2;
 const stdDevMs = (maxIntervalMs - minIntervalMs) / 6;
 const clickJitterPx = 4;
@@ -237,13 +237,13 @@ async function main() {
         if (success === 0 && isNeboActive) {
             backgroundLeftClick(targetWindow, 1717, 700);
             isNeboActive = false;
-            await pauseAwareSleep(2000);
+            await pauseAwareSleep(1200);
         }
 
         if (success === 3) {
             backgroundRightClick(targetWindow, neboCoords.x, neboCoords.y);
             isNeboActive = true;
-            await pauseAwareSleep(2000);
+            await pauseAwareSleep(1200);
         }
 
         if (success === 6) {
@@ -251,7 +251,7 @@ async function main() {
             await waitUntilResumed();
             backgroundLeftClick(targetWindow, 1762, 543);
             success = 0;
-            await pauseAwareSleep(2000);
+            await pauseAwareSleep(1000);
             backgroundLeftClick(targetWindow, 1717, 700);
             isNeboActive = false;
 
@@ -272,7 +272,7 @@ async function main() {
                 screenPoint.x += 37;
             }
 
-            await pauseAwareSleep(2000);
+            await pauseAwareSleep(1200);
 
             if (Date.now() > sessionEnd) {
                 const breakDuration = randomBetween(breakMinMs, breakMaxMs);
@@ -280,6 +280,7 @@ async function main() {
                 await pauseAwareSleep(breakDuration);
 
                 sessionDuration = randomBetween(sessionMinMs, sessionMaxMs);
+                console.log(`\n▶ Нова сесія: ~${formatDuration(sessionDuration)}`);
                 sessionStart = Date.now();
                 sessionEnd = sessionStart + sessionDuration;
             }
@@ -287,7 +288,7 @@ async function main() {
             await waitUntilResumed();
             backgroundRightClick(targetWindow, screenPoint.x, screenPoint.y);
 
-            await pauseAwareSleep(2000);
+            await pauseAwareSleep(1200);
         }
 
         const jitteredX = jitterCoordinate(1760, clickJitterPx);
@@ -299,7 +300,6 @@ async function main() {
 
         const interval = randomInterval();
 
-        console.log(`інтервал ${interval}мс`);
         await pauseAwareSleep(interval);
 
         if (isNeboActive) {
