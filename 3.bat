@@ -1,5 +1,6 @@
 @echo off
 setlocal
+mode con: cols=60 lines=12 >nul
 
 :ask_total
 set "total="

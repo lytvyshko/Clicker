@@ -23,8 +23,8 @@ const stdDevMs = (maxIntervalMs - minIntervalMs) / 6;
 const clickJitterPx = 4;
 
 // --- Fatigue-модель: параметри "ігрової сесії" ---
-const sessionMinMs = 30 * 60 * 1000;   // мінімальна тривалість сесії: 30 хв
-const sessionMaxMs = 100 * 60 * 1000;   // максимальна тривалість сесії: 100 хв
+const sessionMinMs = 120 * 60 * 1000;   // мінімальна тривалість сесії: 120 хв
+const sessionMaxMs = 210 * 60 * 1000;   // максимальна тривалість сесії: 210 хв
 const breakMinMs = 5 * 60 * 1000;          // мінімальна перерва: 5 хв
 const breakMaxMs = 20 * 60 * 1000;      // максимальна перерва: 20 хв
 
