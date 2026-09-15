@@ -2,8 +2,8 @@ import koffi from "koffi";
 import readline from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
 
-const minIntervalMs = 3800;
-const maxIntervalMs = 4000;
+const minIntervalMs = 3900;
+const maxIntervalMs = 4050;
 const meanIntervalMs = (minIntervalMs + maxIntervalMs) / 2;
 const stdDevMs = (maxIntervalMs - minIntervalMs) / 6;
 
