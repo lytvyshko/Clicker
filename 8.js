@@ -214,13 +214,13 @@ async function main() {
         if (success === 0 && isNeboOrPodzemActive) {
             backgroundLeftClick(targetWindow, 1717, 700);
             isNeboOrPodzemActive = false;
-            await pauseAwareSleep(2000);
+            await pauseAwareSleep(1500);
         }
 
         if (success === 3) {
             backgroundRightClick(targetWindow, neboCoords.x, neboCoords.y);
             isNeboOrPodzemActive = true;
-            await pauseAwareSleep(2000);
+            await pauseAwareSleep(1500);
         }
 
         if (isFailAfter6) {
@@ -239,7 +239,7 @@ async function main() {
         }
 
         if (isFailAfter7) {
-            isFailAfter7 = true;
+            isFailAfter7 = false;
         }
 
         if (success === 8) {
