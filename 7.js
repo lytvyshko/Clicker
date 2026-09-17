@@ -16,7 +16,7 @@ if (!Number.isInteger(mirages) || mirages < 0) {
     throw new Error("Потрібно передати невід'ємне ціле значення mirages.");
 }
 
-const minIntervalMs = 2100;
+const minIntervalMs = 2200;
 const maxIntervalMs = 2400;
 const meanIntervalMs = (minIntervalMs + maxIntervalMs) / 2;
 const stdDevMs = (maxIntervalMs - minIntervalMs) / 6;
