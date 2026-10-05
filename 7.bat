@@ -15,6 +15,6 @@ if not defined mirages goto ask_mirages
 for /f "delims=0123456789" %%A in ("%mirages%") do goto ask_mirages
 
 cd /d "%~dp0"
-node 7.js "%total%" "%mirages%"
+node scripts\7.js "%total%" "%mirages%"
 
 pause
