@@ -30,7 +30,7 @@ const PostMessageW = user32.func("__stdcall", "PostMessageW", "bool", [HWND, "ui
 const GetAsyncKeyState = user32.func("__stdcall", "GetAsyncKeyState", "int16", ["int"]);
 
 const GA_ROOT = 2;
-const VK_F8 = 0x77;
+const VK_F10 = 0x79;
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -40,7 +40,7 @@ function startPauseHotkey() {
     let wasPressed = false;
 
     return setInterval(() => {
-        const isPressed = (GetAsyncKeyState(VK_F8) & 0x8000) !== 0;
+        const isPressed = (GetAsyncKeyState(VK_F10) & 0x8000) !== 0;
 
         if (isPressed && !wasPressed) {
             paused = !paused;
@@ -148,7 +148,7 @@ async function main() {
     terminal.close();
 
     console.log(`Фонові кліки у координатах вікна: (${clientPoint.x}, ${clientPoint.y})`);
-    console.log("F8 — pause/resume, Ctrl+C — stop");
+    console.log("F10 — pause/resume, Ctrl+C — stop");
 
     startPauseHotkey();
 

@@ -47,7 +47,7 @@ const PostMessageW = user32.func("__stdcall", "PostMessageW", "bool", [HWND, "ui
 const GetAsyncKeyState = user32.func("__stdcall", "GetAsyncKeyState", "int16", ["int"]);
 
 const GA_ROOT = 2;
-const VK_F8 = 0x77;
+const VK_F10 = 0x79;
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -57,7 +57,7 @@ function startPauseHotkey() {
     let wasPressed = false;
 
     return setInterval(() => {
-        const isPressed = (GetAsyncKeyState(VK_F8) & 0x8000) !== 0;
+        const isPressed = (GetAsyncKeyState(VK_F10) & 0x8000) !== 0;
 
         if (isPressed && !wasPressed) {
             paused = !paused;
@@ -98,11 +98,6 @@ function gaussianRandom(mean, stdDev) {
     return mean + z0 * stdDev;
 }
 
-/**
- * Інтервал між кліками з урахуванням "втоми" — наскільки далеко ми
- * зайшли у поточну сесію (0 = щойно почали, 1 = кінець сесії).
- * Ближче до кінця сесії людина клікає трохи повільніше й нерівномірніше.
- */
 function randomInterval() {
     let interval = gaussianRandom(meanIntervalMs, stdDevMs);
 
@@ -206,7 +201,7 @@ async function main() {
 
     terminal.close();
 
-    console.log("F8 — пауза/продовження, Ctrl+C — завершити");
+    console.log("F10 — пауза/продовження, Ctrl+C — завершити");
 
     const pauseHotkeyTimer = startPauseHotkey();
 

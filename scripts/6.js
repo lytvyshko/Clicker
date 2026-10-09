@@ -23,10 +23,6 @@ const stdDevMs = (maxIntervalMs - minIntervalMs) / 6;
 const clickJitterPx = 4;
 
 // --- Fatigue-модель: параметри "ігрової сесії" ---
-const sessionMinMs = 120 * 60 * 1000;   // мінімальна тривалість сесії: 120 хв
-const sessionMaxMs = 210 * 60 * 1000;   // максимальна тривалість сесії: 210 хв
-const breakMinMs = 5 * 60 * 1000;          // мінімальна перерва: 5 хв
-const breakMaxMs = 20 * 60 * 1000;      // максимальна перерва: 20 хв
 
 // Область перевірки задається координатами екрана: left, top, width, height.
 const colorRegion = new Region(1646, 846, 165, 21);
@@ -53,7 +49,7 @@ const PostMessageW = user32.func("__stdcall", "PostMessageW", "bool", [HWND, "ui
 const GetAsyncKeyState = user32.func("__stdcall", "GetAsyncKeyState", "int16", ["int"]);
 
 const GA_ROOT = 2;
-const VK_F8 = 0x77;
+const VK_F10 = 0x79;
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -63,7 +59,7 @@ function startPauseHotkey() {
     let wasPressed = false;
 
     return setInterval(() => {
-        const isPressed = (GetAsyncKeyState(VK_F8) & 0x8000) !== 0;
+        const isPressed = (GetAsyncKeyState(VK_F10) & 0x8000) !== 0;
 
         if (isPressed && !wasPressed) {
             paused = !paused;
@@ -104,15 +100,6 @@ function gaussianRandom(mean, stdDev) {
     return mean + z0 * stdDev;
 }
 
-function randomBetween(min, max) {
-    return Math.random() * (max - min) + min;
-}
-
-/**
- * Інтервал між кліками з урахуванням "втоми" — наскільки далеко ми
- * зайшли у поточну сесію (0 = щойно почали, 1 = кінець сесії).
- * Ближче до кінця сесії людина клікає трохи повільніше й нерівномірніше.
- */
 function randomInterval() {
     let interval = gaussianRandom(meanIntervalMs, stdDevMs);
 
@@ -183,13 +170,6 @@ async function hasTargetColor(region) {
     return false;
 }
 
-function formatDuration(ms) {
-    const totalSeconds = Math.round(ms / 1000);
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${minutes} хв ${seconds} сек`;
-}
-
 async function main() {
     const terminal = readline.createInterface({ input, output });
     let isNeboActive = false;
@@ -221,17 +201,9 @@ async function main() {
     terminal.close();
 
     console.log(`Фонові кліки у координатах вікна: (${screenPoint.x}, ${screenPoint.y})`);
-    console.log("F8 — пауза/продовження, Ctrl+C — завершити");
+    console.log("F10 — пауза/продовження, Ctrl+C — завершити");
 
     const pauseHotkeyTimer = startPauseHotkey();
-
-    // --- нова "ігрова сесія" ---
-    let sessionDuration = randomBetween(sessionMinMs, sessionMaxMs);
-    let sessionStart = Date.now();
-    let sessionEnd = sessionStart + sessionDuration;
-
-
-    console.log(`\n▶ Нова сесія: ~${formatDuration(sessionDuration)}`);
 
     while (success <= 6) {
         if (success === 0 && isNeboActive) {
@@ -273,17 +245,6 @@ async function main() {
             }
 
             await pauseAwareSleep(1200);
-
-            if (Date.now() > sessionEnd) {
-                const breakDuration = randomBetween(breakMinMs, breakMaxMs);
-                console.log(`⏸ Перерва: ~${formatDuration(breakDuration)}`);
-                await pauseAwareSleep(breakDuration);
-
-                sessionDuration = randomBetween(sessionMinMs, sessionMaxMs);
-                console.log(`\n▶ Нова сесія: ~${formatDuration(sessionDuration)}`);
-                sessionStart = Date.now();
-                sessionEnd = sessionStart + sessionDuration;
-            }
 
             await waitUntilResumed();
             backgroundRightClick(targetWindow, screenPoint.x, screenPoint.y);

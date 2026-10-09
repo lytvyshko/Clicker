@@ -31,7 +31,7 @@ const PostMessageW = user32.func("__stdcall", "PostMessageW", "bool", [
 const GetAsyncKeyState = user32.func("__stdcall", "GetAsyncKeyState", "int16", ["int"]);
 
 const GA_ROOT = 2;
-const VK_F8 = 0x77;
+const VK_F10 = 0x79;
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 let paused = false;
@@ -40,7 +40,7 @@ function startPauseHotkey() {
     let wasPressed = false;
 
     return setInterval(() => {
-        const isPressed = (GetAsyncKeyState(VK_F8) & 0x8000) !== 0;
+        const isPressed = (GetAsyncKeyState(VK_F10) & 0x8000) !== 0;
 
         if (isPressed && !wasPressed) {
             paused = !paused;
@@ -130,7 +130,7 @@ async function main() {
 
     terminal.close();
 
-    console.log("Press F8 to pause/resume, Ctrl+C to stop.");
+    console.log("Press F10 to pause/resume, Ctrl+C to stop.");
 
     startPauseHotkey();
 
