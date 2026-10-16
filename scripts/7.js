@@ -16,7 +16,7 @@ if (!Number.isInteger(mirages) || mirages < 0) {
     throw new Error("Потрібно передати невід'ємне ціле значення mirages.");
 }
 
-const minIntervalMs = 2200;
+const minIntervalMs = 2250;
 const maxIntervalMs = 2400;
 const meanIntervalMs = (minIntervalMs + maxIntervalMs) / 2;
 const stdDevMs = (maxIntervalMs - minIntervalMs) / 6;
@@ -103,7 +103,7 @@ function randomInterval() {
 
     // зрідка (~3%) імітуємо "відволікання" — довша пауза
     if (Math.random() < 0.03) {
-        interval += Math.random() * 3000 + 1000; // +1-4 секунд
+        interval += Math.random() * 2000 + 1000; // +1-3 секунд
     }
 
     return Math.max(minIntervalMs, Math.floor(interval));
