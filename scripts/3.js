@@ -23,7 +23,7 @@ const stdDevMs = (maxIntervalMs - minIntervalMs) / 6;
 const clickJitterPx = 4;
 
 // Область перевірки задається координатами екрана: left, top, width, height.
-const colorRegion = new Region(1646, 846, 165, 21);
+const colorRegion = new Region(1648, 829, 165, 21);
 const targetColor = { R: 2, G: 191, B: 7 }; // зелений
 const colorTolerance = 25;
 
@@ -205,7 +205,7 @@ async function main() {
         if (success === 3) {
             ready++;
             await waitUntilResumed();
-            backgroundLeftClick(targetWindow, 1762, 543);
+            backgroundLeftClick(targetWindow, 1762, 527);
             success = 0;
 
             if (ready === total) {
@@ -233,8 +233,8 @@ async function main() {
             await pauseAwareSleep(2000);
         }
 
-        const jitteredX = jitterCoordinate(1760, clickJitterPx);
-        const jitteredY = jitterCoordinate(911, clickJitterPx);
+        const jitteredX = jitterCoordinate(1761, clickJitterPx);
+        const jitteredY = jitterCoordinate(895, clickJitterPx);
 
         await waitUntilResumed();
         backgroundLeftClick(targetWindow, jitteredX, jitteredY);

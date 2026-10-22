@@ -208,7 +208,7 @@ async function main() {
 
     while (success <= 9) {
         if (success === 0 && isNeboOrPodzemActive) {
-            backgroundLeftClick(targetWindow, 1717, 700);
+            backgroundLeftClick(targetWindow, 1718, 682);
             isNeboOrPodzemActive = false;
             await pauseAwareSleep(1500);
         }
@@ -220,7 +220,7 @@ async function main() {
         }
 
         if (isFailAfter6) {
-            backgroundLeftClick(targetWindow, 1717, 700);
+            backgroundLeftClick(targetWindow, 1718, 682);
             await pauseAwareSleep(2000);
             backgroundRightClick(targetWindow, neboCoords.x, neboCoords.y);
             await pauseAwareSleep(2000);
@@ -228,7 +228,7 @@ async function main() {
         }
 
         if (success === 6 && !isFailAfter7) {
-            backgroundLeftClick(targetWindow, 1717, 700);
+            backgroundLeftClick(targetWindow, 1718, 682);
             await pauseAwareSleep(2000);
             backgroundRightClick(targetWindow, podzemCoords.x, podzemCoords.y);
             await pauseAwareSleep(2000);
@@ -245,10 +245,10 @@ async function main() {
         if (success === 9) {
             ready++;
             await waitUntilResumed();
-            backgroundLeftClick(targetWindow, 1762, 543);
+            backgroundLeftClick(targetWindow, 1762, 527);
             success = 0;
             await pauseAwareSleep(2000);
-            backgroundLeftClick(targetWindow, 1717, 700);
+            backgroundLeftClick(targetWindow, 1718, 682);
             isNeboOrPodzemActive = false;
 
             if (ready === total) {
@@ -276,8 +276,8 @@ async function main() {
             await pauseAwareSleep(2000);
         }
 
-        const jitteredX = jitterCoordinate(1760, clickJitterPx);
-        const jitteredY = jitterCoordinate(911, clickJitterPx);
+        const jitteredX = jitterCoordinate(1761, clickJitterPx);
+        const jitteredY = jitterCoordinate(895, clickJitterPx);
 
         await waitUntilResumed();
         backgroundLeftClick(targetWindow, jitteredX, jitteredY);
